@@ -1,6 +1,7 @@
 # Update opkg and install necessary packages
+# install kmod-tun for tunneling support
 opkg update
-opkg install coreutils-nohup curl kmod-tun wget jq
+opkg install coreutils-nohup curl wget jq
 
 # Copy configuration and watchdog script, overwriting if they exist
 cp -f hiddify-conf.json /root/hiddify-conf.json
