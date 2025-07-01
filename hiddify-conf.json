@@ -14,7 +14,7 @@
   "mtu": 1500,
   "strict-route": false,
   "connection-test-url": "http://cp.cloudflare.com",
-  "url-test-interval": 60000000,
+  "url-test-interval": 300000,
   "enable-clash-api": true,
   "clash-api-port": 6756,
   "web-secret": "hiddify-server-selector",
