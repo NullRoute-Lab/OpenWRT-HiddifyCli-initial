@@ -50,3 +50,10 @@ http://192.168.27.1:6756/ui/?secret=hiddify-server-selector#/
 --------------
 
 restart : /etc/init.d/hiddify restart
+
+------
+
+# cleanup
+
+chmod +x cleanup.sh
+./cleanup.sh
