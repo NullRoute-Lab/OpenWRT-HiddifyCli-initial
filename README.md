@@ -31,7 +31,7 @@ You can apply policy routing using the `pbr` package.
 
 -----
 
-wget https://github.com/AmirParsaRabiei/OpenWRT-HiddifyCli/archive/refs/heads/main.tar.gz -O main.tar.gz && tar -xzf main.tar.gz
+wget https://github.com/QUANT81/OpenWRT-HiddifyCli/archive/refs/heads/main.zip -O main.zip && unzip main.zip
 
 chmod +x ./setup.sh
 
@@ -60,3 +60,4 @@ chmod +x cleanup.sh
 
 ------
 tested on : Xiaomi Mi Router 4A Gigabit Edition
+
