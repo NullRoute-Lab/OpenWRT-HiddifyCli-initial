@@ -18,7 +18,7 @@ SUB_URL="https://raw.githubusercontent.com/QUANT81/TVC/refs/heads/main/subscript
 Enable_OVPN=false # This script part focuses on non-OVPN part. OVPN watchdog would need similar changes.
 
 # CRON_JOB_OLD="18,48 * * * * /etc/init.d/hiddify restart" # Old cron job
-CRON_JOB_NEW="18,48 * * * * /etc/init.d/hiddify update_config" # New cron job
+CRON_JOB_NEW="0 * * * * /etc/init.d/hiddify update_config" # New cron job
 
 LIVE_CONFIG_FILE="/root/hiddify-sub"
 WATCHDOG_SCRIPT_NAME="hiddify_watchdog.sh" # Assuming this is the non-OpenVPN watchdog
