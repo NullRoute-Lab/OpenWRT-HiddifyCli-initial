@@ -103,21 +103,77 @@ start() {
 
 stop() {
     echo "Stopping Hiddify service..."
+
+    # Determine the correct watchdog script name based on Enable_OVPN
+    local current_watchdog_script_name="$WATCHDOG_SCRIPT_NAME"
     if [ "$Enable_OVPN" = true ]; then
-        echo "Stopping OpenVPN related processes..."
-        pkill -f hiddify_openvpn_watchdog.sh # Use pkill for safety
-        killall HiddifyCli # Assuming HiddifyCli is common
-        killall openvpn
-    else
-        echo "Stopping standard Hiddify processes..."
-        # Use pkill -f to ensure the correct watchdog script is killed.
-        # This is safer if other scripts might have similar names.
-        pkill -f "/root/$WATCHDOG_SCRIPT_NAME"
-        # It's also good practice to ensure HiddifyCli is stopped directly,
-        # as watchdog might be killed before it stops HiddifyCli.
-        pkill -f "HiddifyCli run --config $LIVE_CONFIG_FILE"
+        current_watchdog_script_name="hiddify_openvpn_watchdog.sh"
     fi
+
+    # Check if pkill is available
+    if command -v pkill >/dev/null 2>&1; then
+        echo "Using pkill to stop processes..."
+        if [ "$Enable_OVPN" = true ]; then
+            echo "Stopping OpenVPN related processes..."
+            pkill -f "/root/$current_watchdog_script_name"
+            pkill -f "HiddifyCli run --config $LIVE_CONFIG_FILE" # Assuming HiddifyCli command is similar or needs specific targeting
+            pkill -f openvpn # Standard openvpn process name
+        else
+            echo "Stopping standard Hiddify processes..."
+            pkill -f "/root/$current_watchdog_script_name"
+            pkill -f "HiddifyCli run --config $LIVE_CONFIG_FILE"
+        fi
+    else
+        echo "pkill not found. Using pgrep and kill to stop processes..."
+        # Stop the watchdog script
+        echo "Attempting to stop $current_watchdog_script_name..."
+        pgrep -f "/root/$current_watchdog_script_name" | while read -r pid; do
+            if [ -n "$pid" ]; then
+                echo "Killing $current_watchdog_script_name (PID: $pid)..."
+                kill "$pid"
+            fi
+        done
+
+        # Stop HiddifyCli process
+        echo "Attempting to stop HiddifyCli..."
+        pgrep -f "HiddifyCli run --config $LIVE_CONFIG_FILE" | while read -r pid; do
+            if [ -n "$pid" ]; then
+                echo "Killing HiddifyCli (PID: $pid)..."
+                kill "$pid"
+            fi
+        done
+
+        if [ "$Enable_OVPN" = true ]; then
+            echo "Attempting to stop OpenVPN process..."
+            pgrep -f openvpn | while read -r pid; do # Assuming 'openvpn' is a distinct enough name
+                if [ -n "$pid" ]; then
+                    echo "Killing openvpn (PID: $pid)..."
+                    kill "$pid"
+                fi
+            done
+        fi
+    fi
+
+    # Give processes a moment to terminate gracefully
+    sleep 2
+
+    # Optional: Force kill remaining processes if they didn't stop (use with caution)
+    # echo "Checking for remaining processes and force stopping if necessary..."
+    # if pgrep -f "/root/$current_watchdog_script_name" >/dev/null; then
+    #     echo "$current_watchdog_script_name still running, attempting force kill..."
+    #     pgrep -f "/root/$current_watchdog_script_name" | xargs kill -9
+    # fi
+    # if pgrep -f "HiddifyCli run --config $LIVE_CONFIG_FILE" >/dev/null; then
+    #    echo "HiddifyCli still running, attempting force kill..."
+    #    pgrep -f "HiddifyCli run --config $LIVE_CONFIG_FILE" | xargs kill -9
+    # fi
+    # if [ "$Enable_OVPN" = true ] && pgrep -f openvpn >/dev/null; then
+    #    echo "OpenVPN still running, attempting force kill..."
+    #    pgrep -f openvpn | xargs kill -9
+    # fi
+
     remove_cron_job
+    echo "Hiddify service stop sequence finished."
 }
 
 restart() {
