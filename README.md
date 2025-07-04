@@ -57,3 +57,6 @@ restart : /etc/init.d/hiddify restart
 
 chmod +x cleanup.sh
 ./cleanup.sh
+
+------
+tested on : Xiaomi Mi Router 4A Gigabit Edition
