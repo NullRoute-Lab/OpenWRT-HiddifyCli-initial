@@ -61,3 +61,6 @@ chmod +x cleanup.sh
 ------
 tested on : Xiaomi Mi Router 4A Gigabit Edition
 
+-----
+# TODO
+vaghti bargh mire... hanoz ham last config's to chache bashe
