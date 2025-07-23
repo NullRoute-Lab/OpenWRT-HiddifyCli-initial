@@ -20,7 +20,7 @@ SUB_URL="https://raw.githubusercontent.com/tvccccc/TVCCCC/refs/heads/main/subscr
 Enable_OVPN=false # This script part focuses on non-OVPN part. OVPN watchdog would need similar changes.
 
 # CRON_JOB_OLD="18,48 * * * * /etc/init.d/hiddify restart" # Old cron job
-CRON_JOB_NEW="0 * * * * /etc/init.d/hiddify update_config" # New cron job
+CRON_JOB_NEW="0 */12 * * * /root/update_subscriptions.sh && /etc/init.d/hiddify update_config" # New cron job
 
 LIVE_CONFIG_FILE="/root/hiddify-sub"
 WATCHDOG_SCRIPT_NAME="hiddify_watchdog.sh" # Assuming this is the non-OpenVPN watchdog
@@ -81,6 +81,9 @@ remove_cron_job() {
 start() {
     echo "Starting Hiddify service..."
     
+    cp -f /etc/init.d/update_subscriptions.sh /root/update_subscriptions.sh
+    chmod +x /root/update_subscriptions.sh
+
     if [ ! -f "$SERVICE_DIR/HiddifyCli" ]; then
         download_and_extract || return 1
     fi
@@ -187,14 +190,22 @@ restart() {
 
 update_config() {
     echo "Attempting to trigger configuration update for Hiddify..."
+
+    # Run the subscription update script
+    /root/update_subscriptions.sh
+
+    # Read the best URL from the state file
+    if [ -f "/tmp/hiddify_current_sub_url" ]; then
+        export SUB_URL=$(cat "/tmp/hiddify_current_sub_url")
+    else
+        echo "Error: State file not found. Cannot determine subscription URL."
+        return
+    fi
+
     local watchdog_pid
-    # Find the PID of the correct watchdog script
-    # We use pgrep -f to match the full path, avoiding issues with other scripts named similarly
     watchdog_pid=$(pgrep -f "/root/$WATCHDOG_SCRIPT_NAME")
 
     if [ -n "$watchdog_pid" ]; then
-        # Send SIGUSR1 signal to the watchdog script
-        # Handle cases where multiple PIDs might be found (though unlikely for nohup'd script)
         for pid in $watchdog_pid; do
             echo "Sending SIGUSR1 to $WATCHDOG_SCRIPT_NAME (PID: $pid)"
             kill -USR1 "$pid"
