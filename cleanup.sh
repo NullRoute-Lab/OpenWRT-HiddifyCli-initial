@@ -21,6 +21,7 @@ rm -f /root/hiddify-conf.json
 rm -f /root/hiddify-openvpn-conf.json
 rm -f /root/hiddify_watchdog.sh
 rm -f /root/hiddify_openvpn_watchdog.sh
+rm -f /root/update_subscriptions.sh
 rm -f /root/hiddify-sub # Live configuration file
 rm -rf /root/openvpn/
 
