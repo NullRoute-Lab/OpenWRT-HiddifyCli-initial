@@ -53,13 +53,38 @@ download_and_extract() {
 download_initial_config() {
     if [ ! -f "$LIVE_CONFIG_FILE" ]; then
         echo "Initial configuration $LIVE_CONFIG_FILE not found. Downloading..."
+
+        # Try downloading from the primary URL first
         curl -L -o "$LIVE_CONFIG_FILE" "$SUB_URL"
+
+        # If the primary URL fails, try the backup links
         if [ ! -s "$LIVE_CONFIG_FILE" ]; then
-            echo "Error: Downloaded initial configuration file $LIVE_CONFIG_FILE is empty or download failed."
+            echo "Primary subscription link failed. Trying backup links..."
+
+            # The list of backup URLs should be the same as in update_subscriptions.sh
+            local backup_urls=(
+                "http://router.freehost.io/github/mix.txt"
+                "https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
+            )
+
+            for url in "${backup_urls[@]}"; do
+                echo "Trying backup link: $url"
+                curl -L -o "$LIVE_CONFIG_FILE" "$url"
+                if [ -s "$LIVE_CONFIG_FILE" ]; then
+                    echo "Backup link successful. Initial configuration downloaded."
+                    # Update the state file with the successful URL
+                    echo "$url" > "/tmp/hiddify_current_sub_url"
+                    return 0
+                fi
+            done
+
+            echo "Error: All subscription links failed. Could not download initial configuration."
             rm -f "$LIVE_CONFIG_FILE" # Clean up
             return 1
         else
-            echo "Initial configuration downloaded successfully."
+            echo "Initial configuration downloaded successfully from primary URL."
+            # Update the state file with the primary URL
+            echo "$SUB_URL" > "/tmp/hiddify_current_sub_url"
         fi
     else
         echo "Configuration file $LIVE_CONFIG_FILE already exists."
