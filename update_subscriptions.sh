@@ -1,11 +1,7 @@
 #!/bin/sh
 
 # List of subscription links
-SUB_URLS=(
-    "https://raw.githubusercontent.com/tvccccc/TVCCCC/refs/heads/main/subscriptions/xray/normal/mix"
-    "http://router.freehost.io/github/mix.txt"
-    "https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
-)
+SUB_URLS="https://raw.githubusercontent.com/tvccccc/TVCCCC/refs/heads/main/subscriptions/xray/normal/mix http://router.freehost.io/github/mix.txt https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
 
 # State file to store the current subscription URL
 STATE_FILE="/tmp/hiddify_current_sub_url"
@@ -32,7 +28,7 @@ get_content() {
 
 # Find the best subscription link
 BEST_SUB_URL=""
-for url in "${SUB_URLS[@]}"; do
+for url in $SUB_URLS; do
     if is_available "$url"; then
         CONTENT=$(get_content "$url")
         if [ -n "$CONTENT" ]; then

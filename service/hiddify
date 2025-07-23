@@ -62,12 +62,9 @@ download_initial_config() {
             echo "Primary subscription link failed. Trying backup links..."
 
             # The list of backup URLs should be the same as in update_subscriptions.sh
-            local backup_urls=(
-                "http://router.freehost.io/github/mix.txt"
-                "https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
-            )
+            local backup_urls="http://router.freehost.io/github/mix.txt https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
 
-            for url in "${backup_urls[@]}"; do
+            for url in $backup_urls; do
                 echo "Trying backup link: $url"
                 curl -L -o "$LIVE_CONFIG_FILE" "$url"
                 if [ -s "$LIVE_CONFIG_FILE" ]; then
