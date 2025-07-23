@@ -1,6 +1,9 @@
 #!/bin/sh
 
-# List of subscription links is passed as an environment variable (SUB_URLS)
+# Read SUB_URLS from the hiddify service file
+if [ -f "/etc/init.d/hiddify" ]; then
+    SUB_URLS=$(grep -o 'SUB_URLS="[^"]*"' /etc/init.d/hiddify | sed 's/SUB_URLS="//;s/"//')
+fi
 
 # State file to store the current subscription URL
 STATE_FILE="/tmp/hiddify_current_sub_url"
