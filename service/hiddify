@@ -9,12 +9,8 @@ HIDDIFY_URL="https://github.com/QUANT81/hiddify-core/releases/download/v1.0.1/hi
 # HIDDIFY_URL="https://github.com/PacketCipher/hiddify-core/releases/download/draft/hiddify-cli-linux-mipsel-softfloat.tar.gz"
 # HIDDIFY_URL="https://github.com/hiddify/hiddify-core/releases/download/v3.1.8/hiddify-cli-linux-mipsel-softfloat.tar.gz"
 
-SUB_URL="https://raw.githubusercontent.com/tvccccc/TVCCCC/refs/heads/main/subscriptions/xray/normal/mix"
-# SUB_URL="http://router.freehost.io/github/mix.txt"
-# SUB_URL="https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
-# SUB_URL="https://raw.githubusercontent.com/hiddify/hiddify-next/main/test.configs/warp"
-# SUB_URL="https://raw.githubusercontent.com/PacketCipher/TVC/main/subscriptions/hiddify/warp"
-# SUB_URL="https://raw.githubusercontent.com/hiddify/hiddify-app/refs/heads/main/test.configs/warp"
+SUB_URLS="https://raw.githubusercontent.com/tvccccc/TVCCCC/refs/heads/main/subscriptions/xray/normal/mix http://router.freehost.io/github/mix.txt https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
+SUB_URL=$(echo "$SUB_URLS" | cut -d' ' -f1)
 
 # Modify OpenVPN to be enabled or not
 Enable_OVPN=false # This script part focuses on non-OVPN part. OVPN watchdog would need similar changes.
@@ -61,8 +57,7 @@ download_initial_config() {
         if [ ! -s "$LIVE_CONFIG_FILE" ]; then
             echo "Primary subscription link failed. Trying backup links..."
 
-            # The list of backup URLs should be the same as in update_subscriptions.sh
-            local backup_urls="http://router.freehost.io/github/mix.txt https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
+            local backup_urls=$(echo "$SUB_URLS" | cut -d' ' -f2-)
 
             for url in $backup_urls; do
                 echo "Trying backup link: $url"
@@ -120,9 +115,9 @@ start() {
         # This part is for OVPN, which is out of scope for current changes,
         # but if it were to be updated, hiddify_openvpn_watchdog.sh would need similar signal handling.
         echo "OpenVPN mode is selected. Ensure hiddify_openvpn_watchdog.sh is adapted for new update logic."
-        SUB_URL=$SUB_URL SERVICE_DIR=$SERVICE_DIR nohup /root/hiddify_openvpn_watchdog.sh > /dev/null 2>&1 &
+        SUB_URLS=$SUB_URLS SUB_URL=$SUB_URL SERVICE_DIR=$SERVICE_DIR nohup /root/hiddify_openvpn_watchdog.sh > /dev/null 2>&1 &
     else
-        SUB_URL=$SUB_URL SERVICE_DIR=$SERVICE_DIR nohup "/root/$WATCHDOG_SCRIPT_NAME" > /dev/null 2>&1 &
+        SUB_URLS=$SUB_URLS SUB_URL=$SUB_URL SERVICE_DIR=$SERVICE_DIR nohup "/root/$WATCHDOG_SCRIPT_NAME" > /dev/null 2>&1 &
     fi
 
     add_cron_job

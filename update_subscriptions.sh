@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# List of subscription links
-SUB_URLS="https://raw.githubusercontent.com/tvccccc/TVCCCC/refs/heads/main/subscriptions/xray/normal/mix http://router.freehost.io/github/mix.txt https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
+# List of subscription links is passed as an environment variable (SUB_URLS)
 
 # State file to store the current subscription URL
 STATE_FILE="/tmp/hiddify_current_sub_url"
