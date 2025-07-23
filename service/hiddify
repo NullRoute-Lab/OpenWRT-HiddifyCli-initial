@@ -11,6 +11,7 @@ HIDDIFY_URL="https://github.com/QUANT81/hiddify-core/releases/download/v1.0.1/hi
 
 SUB_URL="https://raw.githubusercontent.com/tvccccc/TVCCCC/refs/heads/main/subscriptions/xray/normal/mix"
 # SUB_URL="http://router.freehost.io/github/mix.txt"
+# SUB_URL="https://raw.githubusercontent.com/PacketCipher/TVC/refs/heads/main/subscriptions/xray/normal/mix"
 # SUB_URL="https://raw.githubusercontent.com/hiddify/hiddify-next/main/test.configs/warp"
 # SUB_URL="https://raw.githubusercontent.com/PacketCipher/TVC/main/subscriptions/hiddify/warp"
 # SUB_URL="https://raw.githubusercontent.com/hiddify/hiddify-app/refs/heads/main/test.configs/warp"
